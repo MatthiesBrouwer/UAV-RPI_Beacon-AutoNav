@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+	<!--arg to adjust name for spawning -->
+	<arg name="pf"/>
+	<!--param name="par" value="$(arg add)"/-->
+
+	<!--deafult positioning parameters-->
+	<arg name="x" default="1.0"/>
+    <arg name="y" default="1.0"/>
+    <arg name="z" default="1.0"/>
+    <arg name="roll" default="0"/>
+    <arg name="pitch" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+
+	<!-- robot description -->
+	<param name="robot_description" command="$(find xacro)/xacro $(find lely_discovery)/urdf/base_discovery.urdf.xacro" />
+
+	<!--call spawn node to place robot in world -->
+	<node pkg="gazebo_ros" type="spawn_model" name="spawn_extra_cart" args="-urdf -param robot_description -model fox_cart_$(arg pf) -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+</launch>
+
+

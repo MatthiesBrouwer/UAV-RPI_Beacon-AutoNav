@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<launch>
+	
+	<!--include the PX4 simulation library-->
+	<include file="$(find px4)/launch/px4.launch"></include>
+	
+	<!--include the simulation start launch file-->
+	<include file="$(find search_target_description)/launch/start_gazebo_uav_world.launch"></include>
+	
+	<!--include the mavros start launch file-->
+	<include file="$(find uav_simulation_description)/launch/start_mavros.launch"> </include>
+	
+	
+</launch>

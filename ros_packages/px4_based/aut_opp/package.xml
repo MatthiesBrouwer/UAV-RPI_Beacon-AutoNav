@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>aut_opp</name>
+  <version>0.0.0</version>
+  <description>The aut_opp package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <maintainer email="boots@todo.todo">boots</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <license>TODO</license>
+
+  <!-- The *depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+	
+  	<build_export_depend>message_runtime</build_export_depend>
+	<exec_depend>message_runtime</exec_depend>
+
+	<depend>actionlib</depend>	
+	
+  	<build_depend>actionlib_msgs</build_depend>
+	<exec_depend>actionlib_msgs</exec_depend>
+
+  	<build_depend>aut_opp_msgs</build_depend>
+	<exec_depend>aut_opp_msgs</exec_depend>
+	
+	<exec_depend>message_generation</exec_depend>	
+
+	<build_depend>roscpp</build_depend>
+ 	<exec_depend>roscpp</exec_depend>
+	
+	<build_depend>geometry_msgs</build_depend>
+    <exec_depend>geometry_msgs</exec_depend>
+
+    <build_depend>mavros_msgs</build_depend>
+    <exec_depend>mavros_msgs</exec_depend>
+
+
+    <build_depend>gazebo_ros</build_depend>
+    <build_export_depend>gazebo_ros</build_export_depend> 
+
+	<exec_depend>gazebo_plugins</exec_depend>
+    <exec_depend>gazebo_ros</exec_depend>
+    <exec_depend>px4</exec_depend>
+    <exec_depend>mavlink_sitl_gazebo</exec_depend>
+	<!-- The export tag contains other, unspecified, tags -->
+  <export>
+  	<gazebo_ros 
+        
+		gazebo_media_path="${prefix}/gazebo_models/worlds"
+		gazebo_model_path="{prefix}/gazebo_models/models"/>
+  </export>
+</package>

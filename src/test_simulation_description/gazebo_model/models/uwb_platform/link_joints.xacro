@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<material name="orange">
+		<color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
+	</material>
+
+	<xacro:macro name="m_platform_base" params="name origin_xyz origin_rpy ixx ixy ixz iyy iyz izz">
+		
+		<link name="${name}">
+			<inertial>
+				<mass value="1024" />
+				<origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+				<inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}" />
+			</inertial>	
+
+			<collision>
+				<origin rpy="${origin_rpy}" xyz="${origin_xyz}"/>
+				<geometry>
+					<box size="0.75 0.75 0.25" />
+				</geometry>
+			</collision>
+			
+			<visual name="x">
+				<origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+				<geometry>
+					<box size="0.75 0.75 0.25" />
+				</geometry>
+				<material name="orange"/>
+			</visual>
+
+		</link>
+	</xacro:macro>
+	
+	
+	<xacro:macro name="m_uwb_anchor" params="name parent origin_xyz origin_rpy ixx ixy ixz iyy iyz izz">
+
+    		<link name="${name}">
+        		<inertial>
+				<mass value="30" />
+				<origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+				<inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}" />
+			</inertial>
+
+			<collision>
+				<origin rpy="${origin_rpy}" xyz="${origin_xyz}"/>
+				<geometry>
+					<cylinder radius="0.023" length="0.08" />
+				</geometry>
+			</collision>
+
+			<visual>
+				<origin rpy="0 0 0" xyz="0 0 0.04" />
+				<geometry>
+					<cylinder radius="0.033" length="0.08" />
+				</geometry>
+				<material name="orange"/>
+			</visual>
+		
+		</link>
+		
+		<joint name="${name}_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}"/>
+			<axis xyz="0 1 0"/>
+			<origin rpy="${origin_rpy}" xyz="${origin_xyz}"/>
+			<limit effort="30" velocity="1.0" lower="-2.2" upper="0.7"/>			
+		</joint>
+		
+		
+	</xacro:macro>	
+
+</robot>
+

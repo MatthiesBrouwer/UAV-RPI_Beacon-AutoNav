@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- set ros parameters-->
+	<arg name="camera_calibration" default="$(find control_tello)/cfg/960x720.yaml"/> 
+	<arg name="camera_frame" default="camera_link"/>
+	
+	<!-- add other launch files -->
+	<include file="$(find control_tello)/launch/start_ar_track_alvar.launch"></include>	
+	<include file="$(find tello_description)/launch/description.launch"></include>
+
+	<!-- launch flock driver as bridge between tellopy and ros-->
+	<node name="flock_driver_node" 
+  		pkg="control_tello" 
+		type="flock_driver.py" 
+		output="screen">
+		<param name="camera_calibration" value="$(arg camera_calibration)"/>
+		<param name="camera_frame" value="$(arg camera_frame)"/>		
+	</node>
+
+  	
+	<!-- Run rviz with a canned layout -->
+  	<node name="rviz" 
+		pkg="rviz" 
+		type="rviz" 
+		args="-d $(find control_tello)/cfg/default.rviz" 
+		output="screen" 
+	/>
+</launch>

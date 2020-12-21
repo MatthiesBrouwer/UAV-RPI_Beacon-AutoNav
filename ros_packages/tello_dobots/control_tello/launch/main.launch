@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- include launch files -->
+	<include file="$(find control_tello)/launch/driver2.launch" />	
+	<include file="$(find control_tello)/launch/start_ar_track_alvar.launch"/>
+	<include file="$(find tello_description)/launch/description.launch"/>
+    <!-- Run rviz with a canned layout -->
+    <node name="rviz" 
+        pkg="rviz" 
+        type="rviz" 
+        args="-d $(find control_tello)/cfg/default.rviz" 
+        output="screen" 
+    />
+	<node 
+  		name="control" 
+		pkg="control_tello" 
+		type="control" 
+		respawn="true" 
+		launch-prefix="xterm -e"
+	/>
+	<node 
+  		name="takeoff_land" 
+		pkg="control_tello" 
+		type="takeoff_land" 
+		respawn="true" 
+		output="screen" 	
+	/>
+	<node 
+  		name="control_rosparam" 
+		pkg="control_rosparam" 
+		type="control_rosparam" 
+		respawn="true" 
+		output="screen" 
+		launch-prefix="xterm -e"
+	/>
+	<node 
+  		name="move_drone" 
+		pkg="control_tello" 
+		type="move_drone" 
+		respawn="true" 
+		output="screen" 
+		launch-prefix="xterm -e"
+	/>
+	<node
+        pkg="tf"
+        type="static_transform_publisher"
+        name="static_tf_broadcaster"
+        args="1 0 0 1.5707 3.14 1.5707 base_link camera_link 500"
+    />
+	<node
+        pkg="tf"
+        type="static_transform_publisher"
+        name="static_tf_broadcaster2"
+        args="0 0 1 0 0 0 world base_link 500"
+    />
+</launch>

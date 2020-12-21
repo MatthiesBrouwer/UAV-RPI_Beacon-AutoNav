@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="world_name" value="$(find search_target_description)/worlds/basic_world.world"/>
+
+<!--EDIT YOUR WORLD HERE-->
+	<arg name="gui" default="true" doc="set false for headless environment " />
+	<arg name="paused" default="false"/>
+	<arg name="debug" default="false"/>
+	<arg name="headless" default="false"/>
+
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" default="$(arg world_name)"/>
+		<arg name="gui" default="$(arg gui)"/>
+		<arg name="paused" default="$(arg paused)"/>
+		<arg name="debug" default="$(arg debug)"/>
+		<arg name="headless" default="$(arg headless)"/>
+	</include>
+
+
+
+	<arg name="x_uav" default="0"/>
+	<arg name="y_uav" default="0"/>
+	<arg name="z_uav" default="0.3"/>
+	
+	<arg name="x_platform" default="3"/>
+	<arg name="y_platform" default="3"/>
+	<arg name="z_platform" default="0"/>
+
+	<arg name="roll_uav" default="0"/>
+	<arg name="pitch_uav" default="0"/>
+	<arg name="yaw_uav" default="3.14"/>
+
+	<arg name="uav_model" default="iris_camera"/>
+
+
+	<!--group ns="platform_group">
+		<param name="robot_description" command="$(find xacro)/xacro -inorder '$(find test_simulation_description)/gazebo_model/models/uwb_platform/uwb_platform_base.xacro'"/>
+		<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+			<param name="publish_frequency" value="30.0"/>
+		</node>
+
+	        <node name="uwb_platform_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model uwb_platform_model -x $(arg x_platform) -y $(arg y_platform) -z $(arg z_platform)"/>
+	</group-->
+
+        <!--node name="spawn_uav" pkg="gazebo_ros" type="spawn_model" args="-file $(find test_simulation_description)/gazebo_model/models/$(arg uav_model)/$(arg uav_model).sdf -sdf -model $(arg uav_model) -x $(arg x_uav) -y $(arg y_uav) -z $(arg z_uav) -R $(arg roll_uav) -P $(arg pitch_uav) -Y $(arg yaw_uav)" /-->
+
+	<param name="robot_description" command="$(find xacro)/xacro $(find test_simulation_description)/gazebo_model/models/uwb_platform/uwb_platform_base.xacro"/>
+
+
+	<group ns="uav">
+		<param name="tf_prefix" value="uav_prefix"/>
+		<include file="$(find test_simulation_description)/launch/spawn_uav.launch">
+			<arg name="robot_name" value="iris_camera"/>
+		</include>
+	</group>
+
+
+        <node pkg="tf2_ros" type="static_transform_publisher" name="map__platform" args="$(arg x_platform) $(arg y_platform) $(arg z_platform) 0 0 0 1 map platform_prefix/base_footprint" />
+
+	
+
+	<group ns="platform">
+		<param name="tf_prefix" value="platform_prefix"/>
+		<include file="$(find test_simulation_description)/launch/spawn_platform.launch">
+			<arg name="robot_name" value="uwb_platform"/>
+			<arg name="init_pose_x" value="$(arg x_platform)"/>
+			<arg name="init_pose_y" value="$(arg y_platform)"/>
+			<arg name="init_pose_z" value="$(arg z_platform)"/>
+		</include>
+	</group>
+        
+
+
+	<!--node pkg="test_simulation_description" name="test_simulation"  type="uwb_simulation.py" output="screen">
+        	<param name="modelstate_index" value="2" />
+  	</node-->
+
+
+
+
+<!--param name="robot_now" command="$(find xacro)/xacro -inorder '$(find test_simulation_description)/gazebo_model/models/uwb_platform/uwb_platform_base.xacro'"/>
+
+        <node name="uwb_platform_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_now -model uwb_platform_model -x $(arg x_platform) -y $(arg y_platform) -z $(arg z_platform)"/>
+-->
+	
+
+	<!--group ns="uav_group"-->
+                <!--param name="robot_description" command="$(find xacro)/xacro -inorder '$(find test_simulation_description)/gazebo_models/iris_camera/iris_camera.sdf'"/-->
+                <!--node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+                        <param name="publish_frequency" value="30.0"/>
+                </node-->
+		
+	<!--	
+		<node name="uav_spawn" pkg="gazebo_ros" type="spawn_model" args="-file $(find test_simulation_description)/gazebo_models/iris_camera/iris_camera.sdf -sdf -model iris_camera -x $(arg x_uav) -y $(arg y_uav) -z $(arg z_uav) -R $(arg roll_uav) -P $(arg pitch_uav) -Y $(arg yaw_uav)" />
+        </group-->
+
+	
+</launch>
+
+
+
