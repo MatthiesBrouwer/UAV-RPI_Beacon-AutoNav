@@ -131,9 +131,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/projects/build/gtest/cmake_install.cmake")
-  include("/projects/build/pozyx_simulation/cmake_install.cmake")
-  include("/projects/build/search_target_description/cmake_install.cmake")
-  include("/projects/build/test_simulation_description/cmake_install.cmake")
   include("/projects/build/uav_simulation_description/cmake_install.cmake")
 
 endif()

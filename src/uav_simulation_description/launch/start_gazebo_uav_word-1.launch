@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="world_name" value="$(find uav_simulation_description)/gazebo_model/worlds/basic_world.world"/>
+
+	<arg name="gui" default="true" doc="set false for headless environment " />
+	<arg name="paused" default="false"/>
+	<arg name="debug" default="false"/>
+	<arg name="headless" default="false"/>
+
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" default="$(arg world_name)"/>
+		<arg name="gui" default="$(arg gui)"/>
+		<arg name="paused" default="$(arg paused)"/>
+		<arg name="debug" default="$(arg debug)"/>
+		<arg name="headless" default="$(arg headless)"/>
+	</include>
+
+
+
+	<arg name="x_uav" default="0"/>
+	<arg name="y_uav" default="0"/>
+	<arg name="z_uav" default="0.3"/>
+	
+	<arg name="x_platform" default="3"/>
+	<arg name="y_platform" default="3"/>
+	<arg name="z_platform" default="0"/>
+
+	<arg name="roll_uav" default="0"/>
+	<arg name="pitch_uav" default="0"/>
+	<arg name="yaw_uav" default="3.14"/>
+
+	<arg name="uav_model" default="iris_camera"/>
+
+
+
+	<param name="robot_description" command="$(find xacro)/xacro $(find uav_simulation_description)/gazebo_model/models/uwb_platform/uwb_platform_base.xacro"/>
+
+
+	<group ns="uav">
+		<param name="tf_prefix" value="uav_prefix"/>
+		<include file="$(find uav_simulation_description)/launch/spawn_uav.launch">
+			<arg name="robot_name" value="iris_camera"/>
+		</include>
+	</group>
+
+
+        <node pkg="tf2_ros" type="static_transform_publisher" name="map__platform" args="$(arg x_platform) $(arg y_platform) $(arg z_platform) 0 0 0 1 map platform_prefix/base_footprint" />
+
+	
+
+	<group ns="platform">
+		<param name="tf_prefix" value="platform_prefix"/>
+		<include file="$(find uav_simulation_description)/launch/spawn_platform.launch">
+			<arg name="robot_name" value="uwb_platform"/>
+			<arg name="init_pose_x" value="$(arg x_platform)"/>
+			<arg name="init_pose_y" value="$(arg y_platform)"/>
+			<arg name="init_pose_z" value="$(arg z_platform)"/>
+		</include>
+	</group>
+        
+
+	
+</launch>
+
+
+

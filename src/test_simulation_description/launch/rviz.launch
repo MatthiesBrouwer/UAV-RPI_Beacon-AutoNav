@@ -1,6 +1,0 @@
-<launch>
-
-	<param name="uwb_platform_description" command="$(find xacro)/xacro --inorder '$(find test_simulation_description)/gazebo_models/uwb_platform_base.xacro'"/>
-
-	<node name="rviz" pkg="rviz">
-</launch>
