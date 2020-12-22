@@ -376,7 +376,7 @@ gtest_hide_internal_symbols:BOOL=OFF
 gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 
 //Path to a library.
-lib:FILEPATH=/opt/ros/melodic/lib/libdynamic_reconfigure_config_init_mutex.so
+lib:FILEPATH=/opt/ros/melodic/lib/libtf2.so
 
 //The directory containing a CMake configuration file for message_filters.
 message_filters_DIR:PATH=/opt/ros/melodic/share/message_filters/cmake
@@ -449,6 +449,12 @@ uav_simulation_description_BINARY_DIR:STATIC=/projects/uwb_uav_simulation_ws/bui
 
 //Value Computed by CMake
 uav_simulation_description_SOURCE_DIR:STATIC=/projects/uwb_uav_simulation_ws/src/uav_simulation_description
+
+//Value Computed by CMake
+uwb_localization_description_BINARY_DIR:STATIC=/projects/uwb_uav_simulation_ws/build/uwb_localization_description
+
+//Value Computed by CMake
+uwb_localization_description_SOURCE_DIR:STATIC=/projects/uwb_uav_simulation_ws/src/uwb_localization_description
 
 //The directory containing a CMake configuration file for xmlrpcpp.
 xmlrpcpp_DIR:PATH=/opt/ros/melodic/share/xmlrpcpp/cmake
@@ -563,7 +569,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

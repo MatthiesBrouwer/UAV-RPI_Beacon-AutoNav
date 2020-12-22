@@ -132,6 +132,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/projects/uwb_uav_simulation_ws/build/gtest/cmake_install.cmake")
   include("/projects/uwb_uav_simulation_ws/build/uav_simulation_description/cmake_install.cmake")
+  include("/projects/uwb_uav_simulation_ws/build/uwb_localization_description/cmake_install.cmake")
 
 endif()
 

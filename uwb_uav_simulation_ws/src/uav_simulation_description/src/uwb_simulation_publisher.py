@@ -5,7 +5,7 @@ import math
 import numpy as np
 import tf2_ros
 
-from test_simulation_description.msg import uwb_data
+from uav_simulation_description.msg import uwb_data_raw
 from gazebo_msgs.msg import ModelStates
 
 
@@ -31,7 +31,7 @@ def get_anchors_pos():
 	tf2_buffer = tf2_ros.Buffer()
 	tf2_listener = tf2_ros.TransformListener(tf2_buffer)
 	
-	rate = rospy.Rate(150.0)
+	rate = rospy.Rate(10.0)
 	
 
 	#--- Connect to the UWB anchors and save their distance to the robot ---#
@@ -54,7 +54,7 @@ def get_anchors_pos():
 			break
 
 	#--- Transform the XYZ transforms to MM scale --#
-	sensor_pos = np.dot(sensor_pos, 1000)
+	sensor_pos = np.dot(sensor_pos, 100)
 		
 	if sensor_pos == []:
 		rospy.logwarn("No anchors have been found. Functions is  working again.")
@@ -100,7 +100,7 @@ def calculate_distance(uwb_pose):
 
 
 def publish_data(destination_id_all, distance_all):
-	uwb_data_cell = uwb_data()
+	uwb_data_cell = uwb_data_raw()
 	uwb_data_cell.destination_id = destination_id_all
 	uwb_data_cell.stamp = [rospy.Time.now(), rospy.Time.now(), rospy.Time.now()]
 	uwb_data_cell.distance = distance_all
@@ -109,7 +109,7 @@ def publish_data(destination_id_all, distance_all):
 
 if __name__ == '__main__':
 	rospy.init_node('uwb_simulation_publisher', anonymous=True)
-	pub = rospy.Publisher('uwb_data_topic', uwb_data, queue_size=10)
+	pub = rospy.Publisher('uwb_data_topic', uwb_data_raw, queue_size=10)
 
 
 	sensor_pos = []
