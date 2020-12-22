@@ -1,8 +1,0 @@
-#goal definition
-string follow
----
-#result definition
-string pos 
----
-#feedback
-string what

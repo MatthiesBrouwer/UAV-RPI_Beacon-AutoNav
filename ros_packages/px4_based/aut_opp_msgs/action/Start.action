@@ -1,8 +1,0 @@
-#goal definition
-string mode
----
-#result definition
-string mode_set 
----
-#feedback
-string what

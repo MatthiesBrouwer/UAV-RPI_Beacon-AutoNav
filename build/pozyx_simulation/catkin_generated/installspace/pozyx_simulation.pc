@@ -1,8 +1,0 @@
-prefix=/projects/install
-
-Name: pozyx_simulation
-Description: Description of pozyx_simulation
-Version: 0.0.1
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 

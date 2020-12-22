@@ -1,8 +1,0 @@
-prefix=/projects/install
-
-Name: uav_simulation_description
-Description: Description of uav_simulation_description
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

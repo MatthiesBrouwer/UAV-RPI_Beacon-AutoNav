@@ -1,2 +1,0 @@
-uav_simulation_description
--DCATKIN_DEVEL_PREFIX=/projects/devel -DCMAKE_INSTALL_PREFIX=/projects/install -G Unix Makefiles
