@@ -1,0 +1,8 @@
+prefix=/projects/uwb_uav_simulation_ws/install
+
+Name: uav_simulation_description
+Description: Description of uav_simulation_description
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

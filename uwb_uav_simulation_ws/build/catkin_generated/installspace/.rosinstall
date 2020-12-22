@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /projects/uwb_uav_simulation_ws/install/setup.sh

@@ -1,0 +1,8 @@
+digraph G {
+"camera_link" -> "ar_marker_8"[label="Broadcaster: /ar_track_alvar\nAverage rate: 950000.000 Hz\nMost recent transform: 0.000 ( 1575377723.916 sec old)\nBuffer length: 0.000 sec\n"];
+"world" -> "camera_link"[label="Broadcaster: /static_tf_broadcaster_fox_cart\nAverage rate: 10.198 Hz\nMost recent transform: 1575377723.917 ( -0.001 sec old)\nBuffer length: 4.805 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1575377723.916"[ shape=plaintext ] ;
+ }->"world";
+}

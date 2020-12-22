@@ -1,0 +1,2 @@
+uav_simulation_description
+-DCATKIN_DEVEL_PREFIX=/projects/uwb_uav_simulation_ws/devel -DCMAKE_INSTALL_PREFIX=/projects/uwb_uav_simulation_ws/install -G Unix Makefiles
