@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(uav_simulation_description)
+project(uwb_localization_description)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,13 +8,12 @@ project(uav_simulation_description)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  gazebo_ros
   geometry_msgs
+  message_generation
   roscpp
   rospy
-  tf2_ros
   std_msgs
-  message_generation
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -53,8 +52,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
+   position_data_uwb.msg
    uwb_data_raw.msg
-)
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -107,8 +107,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES uav_simulation_description
-#  CATKIN_DEPENDS gazebo_ros geometry_msgs roscpp rospy tf2_ros
+#  LIBRARIES uwb_localization_description
+#  CATKIN_DEPENDS geometry_msgs message_generation roscpp rospy std_msgs tf2_ros
 #  DEPENDS system_lib
 )
 
@@ -125,7 +125,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/uav_simulation_description.cpp
+#   src/${PROJECT_NAME}/uwb_localization_description.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -136,7 +136,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/uav_simulation_description_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/uwb_localization_description_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -200,7 +200,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_uav_simulation_description.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_uwb_localization_description.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

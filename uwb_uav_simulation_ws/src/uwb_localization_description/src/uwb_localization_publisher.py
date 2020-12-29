@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+import matplotlib.pyplot as plt
+from scipy import signal
+import numpy as np
 import rospy
 import math
-import numpy as np
 import time
 from uwb_localization_description.msg import position_data_uwb
 from uav_simulation_description.msg import uwb_data_raw
@@ -10,63 +12,48 @@ import os, sys
 
 
 
-
-class triangulator_node_3D:
-	def __init__(self, point_position_all):
+class TriangulatorNode3D:
+	def __init__(self, point_position_all, filter_index = 35):
 		#--- Declare variables ---#
 		self.uwb_data_raw_sub = rospy.Subscriber("/uwb_data_topic", uwb_data_raw, self.update_callback, queue_size = 10)
-		self.pub = rospy.Publisher("/position_data_uwb", position_data_uwb, queue_size = 10)
+		self.pub = rospy.Publisher("/position_data_uwb", position_data_uwb, queue_size = 20)
 		self.point_position_all = point_position_all
-		self.point_distance_all = []
+		self.point_distance_all = np.zeros(len(point_position_all))
+		self.prev_distances = [[0] * len(point_position_all) for i in range(len(point_position_all))]
+		self.filter_index = filter_index
 		self.position_estimation = None
-
-	#### Function: This  function return the current position estimation
+	#### Function: This  function return the current position estimation ####
 	def get_position_estimation(self):
 		return self.position_estimation
 
 
 
 	def update_callback(self, uwb_data_raw_msg):
-		#--- Save data obtained from topic ---#
-		self.point_distance_all =  uwb_data_raw_msg.distance
+		#--- Save data obtained from topic to queue and update queue---#
+		for index, distance in enumerate(uwb_data_raw_msg.distance):
+			self.prev_distances[index].append(distance)
+			if len(self.prev_distances[index]) >= self.filter_index:
+				self.prev_distances[index].pop(0)
 
-		#--- Recalculate measured position and publish result ---#
+			#--- Apply noise mitigating filter to current distance estimations ---#
+				x = np.arange(1, self.filter_index + 1, 1)
+				n = 15
+				b = [1.0 / n] * n
+				a = 1
+				data = signal.lfilter(b, a, self.prev_distances[index])
+
+
+				print("INDEX {}\n\tCURRENT ESTIMATION:\n\t{}\n\tINITIAL DISTANCE:\n\t{}".format(index, data[-1], self.prev_distances[index][-1]))
+				self.point_distance_all[index] = data[-1]
+
+
 		self.position_estimation = self.triangulate_target_position()
-
-		print("		NEW TRIANGULATION POSITION: {}, {}, {}".format(self.position_estimation[0] / 100, self.position_estimation[1] / 100, self.position_estimation[2] / 100))
-		print("=================================\n\n")
-
-	def sort_data_by_distance(self):
-		l = len(self.point_position_all)
-		for i in range(0, l):
-			for j in range(0, l - i - 1):
-				if (self.point_distance_all[j] > self.point_distance_all[j + 1]):
-					position_holder = self.point_position_all[j]
-					distance_holder = self.point_distance_all[j]
-
-					self.point_position_all[j] = self.point_position_all[j + 1]
-					self.point_distance_all[j] = self.point_distance_all[j + 1]
-
-					self.point_position_all[j + 1] = position_holder
-					self.point_distance_all[j + 1] = distance_holder
-
-	def sort_data_by_sublist(self, main_list, sub_list):
-                l = len(main_list)
-                for i in range(0, l):
-                        for j in range(0, l - i - 1):
-                                if (sub_list[j] > sub_list[j + 1]):
-                                        position_holder = main_list[j]
-                                        distance_holder = sub_list[j]
-
-                                        main_list[j] = main_list[j + 1]
-                                        sub_list[j] = sub_list[j + 1]
-
-                                        main_list[j + 1] = position_holder
-                                        sub_list[j + 1] = distance_holder
-                return (main_list, sub_list)
+		self.position_estimation = [self.position_estimation[0]/1000, self.position_estimation[1]/1000, self.position_estimation[2]/1000]
+		print("\tNEW TRIANGULATION POSITION: {}, {}, {}".format(self.position_estimation[0] / 100, self.position_estimation[1] / 100, self.position_estimation[2] / 100))
+		print("====================================\n\n")
 
 
-	
+
 	def triangulate_target_position(self):
 
 		point_1 = np.array(self.point_position_all[0])
@@ -100,15 +87,13 @@ class triangulator_node_3D:
 		dist_1 = np.linalg.norm(point_4 - answer_1)
 		dist_2 = np.linalg.norm(point_4 - answer_2)
 
-		print("\n\n\tANSWER 1: {}\n\tANSWER 2: {}".format(answer_1, answer_2))
-
 		if np.abs(radius_4 - dist_1) < np.abs(radius_4 - dist_2):
 			return answer_1
 		else:
 			return answer_2
-	
 
 	def publish_data(self):
+
 		new_position_data_uwb_msg = position_data_uwb()
 		new_position_data_uwb_msg.uwb_position = self.position_estimation
 		self.pub.publish(new_position_data_uwb_msg)
@@ -121,10 +106,9 @@ if __name__ == '__main__':
 
 	#--- Initialize point positions. Change if changes are made to position distribution ---#
 	point_position_all = [[-300, 300, 120],[300, 300, 120], [-300, -300, 120], [300, -300, 120]] 
-	#point_position_all = [[-0.30, 0.30, 0.12],[0.30, 0.30, 0.12], [-0.30, -0.30, 0.12], [0.30, -0.30, 0.12]] 
 
 	#--- Create 3d_triangulator_node object --#
-	triangulator = triangulator_node_3D(point_position_all)
+	triangulator = TriangulatorNode3D(point_position_all)
 
 	while not rospy.is_shutdown():
 		time.sleep(0.1)

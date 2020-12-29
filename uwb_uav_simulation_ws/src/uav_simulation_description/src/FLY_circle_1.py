@@ -74,7 +74,7 @@ def main():
 		position_msg.header.stamp = rospy.Time.now()
 		position_msg.pose.position.x = target_position_x
 		position_msg.pose.position.y = target_position_y
-		position_msg.pose.position.z = 8
+		position_msg.pose.position.z = 2
 
 		pubPosition.publish(position_msg)
 		print(position_msg)
