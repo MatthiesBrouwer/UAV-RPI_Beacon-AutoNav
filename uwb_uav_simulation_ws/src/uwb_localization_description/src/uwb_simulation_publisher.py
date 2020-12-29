@@ -5,7 +5,7 @@ import math
 import numpy as np
 import tf2_ros
 
-from uav_simulation_description.msg import uwb_data_raw
+from uwb_localization_description.msg import uwb_data_raw
 from gazebo_msgs.msg import ModelStates
 
 
@@ -82,6 +82,8 @@ def subscribe_data(ModelStates):
 		robot_pose_y = ModelStates.pose[MODELSTATE_INDEX].position.y * 1000
 		robot_pose_z = ModelStates.pose[MODELSTATE_INDEX].position.z * 1000
 
+		
+
 
 def calculate_distance(uwb_pose):
 	global robot_pose_x, robot_pose_y, robot_pose_z
@@ -117,8 +119,8 @@ if __name__ == '__main__':
 	sensor_pos = get_anchors_pos()
 
 	#--- Modelstate of robot is in case index 2 ---#
-	MODELSTATE_INDEX = rospy.get_param('/test_simulation_description/modelstate_index', 2)
-	rospy.loginfo("{} is {}".format(rospy.resolve_name('test_simulation_description/modelstate_index'), MODELSTATE_INDEX))
+	MODELSTATE_INDEX = rospy.get_param('/uav_simulation_description/modelstate_index', 1)
+	rospy.loginfo("{} is {}".format(rospy.resolve_name('uav_simulation_description/modelstate_index'), MODELSTATE_INDEX))
 	r = rospy.Rate(10)
 	time.sleep(0.5)
 
@@ -143,6 +145,7 @@ if __name__ == '__main__':
 
 		#--- Publish data with ros ---#
 		publish_data(destination_id_all, distance_all)
+
 		r.sleep()
 	rospy.spin()
 
