@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<!--Start the UWB localization simulation-->
+	<node name="uwbPublisher" pkg="uwb_localization_description" type="uwb_simulation_publisher.py"/>
+	<node name="uwbLocalization" pkg="uwb_localization_description" type="uwb_localization_publisher.py"/>
+
+
+</launch>
+

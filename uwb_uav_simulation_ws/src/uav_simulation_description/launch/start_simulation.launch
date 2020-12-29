@@ -10,5 +10,4 @@
 	<!--include the mavros start launch file-->
 	<include file="$(find uav_simulation_description)/launch/start_mavros.launch"> </include>
 	
-
 </launch>

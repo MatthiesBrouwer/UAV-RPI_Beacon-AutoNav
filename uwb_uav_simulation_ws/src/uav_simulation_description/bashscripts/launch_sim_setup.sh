@@ -10,5 +10,5 @@ export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd):$(pwd)/Tools/sitl_gazebo
 
 cd /projects/
 
-
 roslaunch uav_simulation_description start_simulation.launch
+

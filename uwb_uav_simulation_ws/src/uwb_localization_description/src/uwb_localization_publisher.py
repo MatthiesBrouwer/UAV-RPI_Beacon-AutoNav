@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import matplotlib.pyplot as plt
+from scipy.signal import lfilter
 import numpy as np
 import rospy
 import math
@@ -15,14 +16,72 @@ class GaussianDistributor:
 		self.max_points = max_points
 		self.queue = []
 	def add_point(self, new_point):
-		if new_point not in self.queue:
-			self.queue.append(new_point)
+		self.queue.append(new_point)
 
 		if len(self.queue) >= self.max_points:
-			t = np.arange(0.0, self.max_points, 1)
-			plt.subplot(131)
-			plt.bar(t, self.queue)
+
+			
+			#plt.rcParams['figure.figsize'] = (10, 8)
+
+			#z = self.queue
+			#n_iter = len(self.queue)
+			#sz = (n_iter,)
+			#Q = 1e-5
+			#Allocate space for arrays
+			#xhat = np.zeros(sz)
+			#P = np.zeros(sz)
+			#xhatminus = np.zeros(sz)
+			#Pminus = np.zeros(sz)
+			#K = np.zeros(sz)
+
+			#R = 0.01**2
+
+			#xhat[0] = 0.0
+			#P[0] = 1.0
+
+			#for k in range(1, n_iter):
+				#--- time update ---#
+				#xhatminus[k] = xhat[k-1]
+				#Pminus[k] = P[k-1] + Q
+
+				#--- Measurement update ---#
+				#K[k] = Pminus[k] / (Pminus[k] + R)
+				#xhat[k] = xhatminus[k] + K[k] * (z[k] -  xhatminus[k])
+				#P[k] = (1 - K[k]) * Pminus[k]
+
+			#plt.figure()
+			#plt.plot(self.queue, 'k+', label="noisy measurements")
+			#plt.plot(xhat,'b-',label='a posteri estimate')
+			#plt.legend()
+			#plt.title('Estimate vs. iteration step', fontweight='bold')
+			#plt.xlabel('Iteration')
+			#plt.ylabel('Voltage')
+
+			#plt.figure()
+			#valid_iter = range(1,n_iter) # Pminus not valid at step 0
+			#plt.plot(valid_iter,Pminus[valid_iter],label='a priori error estimate')
+			#plt.title('Estimated $\it{\mathbf{a \ priori}}$ error vs. iteration step', fontweight='bold')
+			#plt.xlabel('Iteration')
+			#plt.ylabel('$(Voltage)^2$')
+			#plt.setp(plt.gca(),'ylim',[0,.01])
+
+
+			
+			x = np.arange(1, self.max_points + 1, 1)
+			plt.plot(x, self.queue, linewidth=2, linestyle="-", c="b")
+			
+			n = 5
+			plt.plot(xhat,'b-',label='a posteri estimate')
+			a = 1
+			yy = lfilter(b, a, self.queue)
+			plt.plot(x, yy, linewidth=2, linestyle="-", c="r")
+			
 			plt.show()
+			
+			#t = np.arange(0.0, self.max_points, 1)
+			#plt.subplot(131)
+			#plt.bar(t, self.queue)
+			#plt.show()
 			print("		CURRENT QUEUE: {}".format(self.queue))
 			self.queue = []
 
@@ -33,12 +92,12 @@ class TriangulatorNode3D:
 	def __init__(self, point_position_all):
 		#--- Declare variables ---#
 		self.uwb_data_raw_sub = rospy.Subscriber("/uwb_data_topic", uwb_data_raw, self.update_callback, queue_size = 10)
-		self.pub = rospy.Publisher("/position_data_uwb", position_data_uwb, queue_size = 10)
+		self.pub = rospy.Publisher("/position_data_uwb", position_data_uwb, queue_size = 20)
 		self.point_position_all = point_position_all
 		self.point_distance_all = []
 		self.position_estimation = None
 
-		self.gaussian_distributor = GaussianDistributor(20)
+		self.gaussian_distributor = GaussianDistributor(10)
 	#### Function: This  function return the current position estimation
 	def get_position_estimation(self):
 		return self.position_estimation
