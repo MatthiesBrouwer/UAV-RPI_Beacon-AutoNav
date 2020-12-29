@@ -1,0 +1,2 @@
+set(uwb_localization_description_MESSAGE_FILES "/projects/uwb_uav_simulation_ws/src/uwb_localization_description/msg/position_data_uwb.msg;/projects/uwb_uav_simulation_ws/src/uwb_localization_description/msg/uwb_data_raw.msg")
+set(uwb_localization_description_SERVICE_FILES "")

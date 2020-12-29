@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/uav_simulation_description_generate_messages_cpp"
-  "/projects/uwb_uav_simulation_ws/devel/include/uav_simulation_description/uwb_data.h"
+  "/projects/uwb_uav_simulation_ws/devel/include/uav_simulation_description/uwb_data_raw.h"
 )
 
 # Per-language clean rules from dependency scanning.

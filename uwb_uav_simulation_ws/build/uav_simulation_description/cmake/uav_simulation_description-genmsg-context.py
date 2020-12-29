@@ -1,6 +1,6 @@
 # generated from genmsg/cmake/pkg-genmsg.context.in
 
-messages_str = "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg"
+messages_str = "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg"
 services_str = ""
 pkg_name = "uav_simulation_description"
 dependencies_str = "std_msgs"

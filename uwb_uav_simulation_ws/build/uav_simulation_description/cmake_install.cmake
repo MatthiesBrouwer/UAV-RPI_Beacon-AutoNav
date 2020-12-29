@@ -38,7 +38,7 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/uav_simulation_description/msg" TYPE FILE FILES "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/uav_simulation_description/msg" TYPE FILE FILES "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)

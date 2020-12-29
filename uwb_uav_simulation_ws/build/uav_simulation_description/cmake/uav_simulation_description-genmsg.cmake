@@ -17,9 +17,9 @@ add_custom_target(uav_simulation_description_generate_messages ALL)
 
 
 
-get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" NAME_WE)
+get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" NAME_WE)
 add_custom_target(_uav_simulation_description_generate_messages_check_deps_${_filename}
-  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "uav_simulation_description" "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" ""
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "uav_simulation_description" "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" ""
 )
 
 #
@@ -29,7 +29,7 @@ add_custom_target(_uav_simulation_description_generate_messages_check_deps_${_fi
 ### Section generating for lang: gencpp
 ### Generating Messages
 _generate_msg_cpp(uav_simulation_description
-  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg"
+  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/uav_simulation_description
@@ -49,7 +49,7 @@ add_custom_target(uav_simulation_description_generate_messages_cpp
 add_dependencies(uav_simulation_description_generate_messages uav_simulation_description_generate_messages_cpp)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" NAME_WE)
+get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" NAME_WE)
 add_dependencies(uav_simulation_description_generate_messages_cpp _uav_simulation_description_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -62,7 +62,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS uav_simulation_description_generate
 ### Section generating for lang: geneus
 ### Generating Messages
 _generate_msg_eus(uav_simulation_description
-  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg"
+  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/uav_simulation_description
@@ -82,7 +82,7 @@ add_custom_target(uav_simulation_description_generate_messages_eus
 add_dependencies(uav_simulation_description_generate_messages uav_simulation_description_generate_messages_eus)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" NAME_WE)
+get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" NAME_WE)
 add_dependencies(uav_simulation_description_generate_messages_eus _uav_simulation_description_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -95,7 +95,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS uav_simulation_description_generate
 ### Section generating for lang: genlisp
 ### Generating Messages
 _generate_msg_lisp(uav_simulation_description
-  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg"
+  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/uav_simulation_description
@@ -115,7 +115,7 @@ add_custom_target(uav_simulation_description_generate_messages_lisp
 add_dependencies(uav_simulation_description_generate_messages uav_simulation_description_generate_messages_lisp)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" NAME_WE)
+get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" NAME_WE)
 add_dependencies(uav_simulation_description_generate_messages_lisp _uav_simulation_description_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -128,7 +128,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS uav_simulation_description_generate
 ### Section generating for lang: gennodejs
 ### Generating Messages
 _generate_msg_nodejs(uav_simulation_description
-  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg"
+  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/uav_simulation_description
@@ -148,7 +148,7 @@ add_custom_target(uav_simulation_description_generate_messages_nodejs
 add_dependencies(uav_simulation_description_generate_messages uav_simulation_description_generate_messages_nodejs)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" NAME_WE)
+get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" NAME_WE)
 add_dependencies(uav_simulation_description_generate_messages_nodejs _uav_simulation_description_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -161,7 +161,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS uav_simulation_description_generate
 ### Section generating for lang: genpy
 ### Generating Messages
 _generate_msg_py(uav_simulation_description
-  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg"
+  "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/uav_simulation_description
@@ -181,7 +181,7 @@ add_custom_target(uav_simulation_description_generate_messages_py
 add_dependencies(uav_simulation_description_generate_messages uav_simulation_description_generate_messages_py)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data.msg" NAME_WE)
+get_filename_component(_filename "/projects/uwb_uav_simulation_ws/src/uav_simulation_description/msg/uwb_data_raw.msg" NAME_WE)
 add_dependencies(uav_simulation_description_generate_messages_py _uav_simulation_description_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility

@@ -1,0 +1,8 @@
+prefix=/projects/uwb_uav_simulation_ws/devel
+
+Name: uwb_localization_description
+Description: Description of uwb_localization_description
+Version: 0.0.0
+Cflags: -I/projects/uwb_uav_simulation_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: 
