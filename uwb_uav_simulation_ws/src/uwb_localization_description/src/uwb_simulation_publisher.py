@@ -23,21 +23,6 @@ global counter
 counter = 0
 
 
-"""
-class UwbAnchor:
-	def __init__(self, name, position, dest_anchor):
-		self.name = name
-		self.position = position
-		self.dest_anchor = dest_anchor
-
-	def get_distance_to_target(self, target_string):
-		tf2_buffer = tf2_ros.Buffer()
-		tf2_listener = tf2_ros.TransformListener(tf2_buffer)
-		robot_pos = tf2_buffer.lookup_transform(target_string, self.name, rospy.Time(0))
-		distance = np.sum(
-
-"""
-
 def get_anchors_pos():
 	max_anchor = 100
 	sensor_pos = []
@@ -84,31 +69,24 @@ def subscribe_data(ModelStates):
 	counter = counter + 1
 
 	#--- gazebo/modelstate topic frequency is 100 hz. We descrese 10 hz with log method ---#
-	#if counter % 10 == 0:
-	#	counter = 0
-		
-	#--- ModelStates.pose[2] = turtlebot3 model real position on modelstates ---#
-	#robot_pose_x = ModelStates.pose[MODELSTATE_INDEX].position.x * 1000
-	#robot_pose_y = ModelStates.pose[MODELSTATE_INDEX].position.y * 1000
-	#robot_pose_z = ModelStates.pose[MODELSTATE_INDEX].position.z * 1000
 	robot_pose_x = ModelStates.pose[MODELSTATE_INDEX].position.x * 1000
 	robot_pose_y = ModelStates.pose[MODELSTATE_INDEX].position.y * 1000
 	robot_pose_z = ModelStates.pose[MODELSTATE_INDEX].position.z * 1000
 
-		
+
 
 
 def calculate_distance(uwb_pose):
 	global robot_pose_x, robot_pose_y, robot_pose_z
 	robot_pose = [robot_pose_x, robot_pose_y, robot_pose_z]
-	
+
 	#--- describe 2 points ---#
 	point_1 = np.array(uwb_pose)
 	point_2 = np.array(robot_pose)
-	
+
 	#--- Calculate distance between the two points ---#
 	total_distance = np.sum((point_1 - point_2)**2, axis = 0)
-	
+
 	#--- Add UWB noise ---#
 	total_distance = total_distance + np.random.normal(0, total_distance * 0.015, 1)
 	return np.sqrt(total_distance) 
@@ -119,7 +97,6 @@ def publish_data(destination_id_all, distance_all):
 	uwb_data_cell.destination_id = destination_id_all
 	uwb_data_cell.stamp = [rospy.Time.now(), rospy.Time.now(), rospy.Time.now()]
 	uwb_data_cell.distance = distance_all
-	#print("\nDISTANCES: {}".format(distance_all))
 	pub.publish(uwb_data_cell)
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import matplotlib.pyplot as plt
-from scipy.signal import lfilter
+from scipy import signal
 import numpy as np
 import rospy
 import math
@@ -13,7 +13,7 @@ import os, sys
 
 
 class TriangulatorNode3D:
-	def __init__(self, point_position_all, filter_index = 50):
+	def __init__(self, point_position_all, filter_index = 35):
 		#--- Declare variables ---#
 		self.uwb_data_raw_sub = rospy.Subscriber("/uwb_data_topic", uwb_data_raw, self.update_callback, queue_size = 10)
 		self.pub = rospy.Publisher("/position_data_uwb", position_data_uwb, queue_size = 20)
@@ -22,7 +22,7 @@ class TriangulatorNode3D:
 		self.prev_distances = [[0] * len(point_position_all) for i in range(len(point_position_all))]
 		self.filter_index = filter_index
 		self.position_estimation = None
-	#### Function: This  function return the current position estimation
+	#### Function: This  function return the current position estimation ####
 	def get_position_estimation(self):
 		return self.position_estimation
 
@@ -40,17 +40,16 @@ class TriangulatorNode3D:
 				n = 15
 				b = [1.0 / n] * n
 				a = 1
-				yy = lfilter(b, a, self.prev_distances[index])
-	                        distance_holder_TEST = self.prev_distances[index][-1]
-				#self.distance_queues[index][-1] = yy[-1]
-				#print("\tCURRENT ESTIMATION:\n\t{}\n\tINITIAL DISTANCE:\n\t{}\n\n".format(yy[-1], self.distance_queues[index][-1]))
-				print("INDEX {}\n\tCURRENT ESTIMATION:\n\t{}\n\tINITIAL DISTANCE:\n\t{}".format(index, yy[-1], distance_holder_TEST))
-				self.point_distance_all[index] = yy[-1]
+				data = signal.lfilter(b, a, self.prev_distances[index])
+
+
+				print("INDEX {}\n\tCURRENT ESTIMATION:\n\t{}\n\tINITIAL DISTANCE:\n\t{}".format(index, data[-1], self.prev_distances[index][-1]))
+				self.point_distance_all[index] = data[-1]
+
+
 		self.position_estimation = self.triangulate_target_position()
 		self.position_estimation = [self.position_estimation[0]/1000, self.position_estimation[1]/1000, self.position_estimation[2]/1000]
 		print("\tNEW TRIANGULATION POSITION: {}, {}, {}".format(self.position_estimation[0] / 100, self.position_estimation[1] / 100, self.position_estimation[2] / 100))
-		
-
 		print("====================================\n\n")
 
 
@@ -88,13 +87,10 @@ class TriangulatorNode3D:
 		dist_1 = np.linalg.norm(point_4 - answer_1)
 		dist_2 = np.linalg.norm(point_4 - answer_2)
 
-		print("\n\n\tANSWER 1: {}\n\tANSWER 2: {}".format(answer_1, answer_2))
-
 		if np.abs(radius_4 - dist_1) < np.abs(radius_4 - dist_2):
 			return answer_1
 		else:
 			return answer_2
-	
 
 	def publish_data(self):
 
@@ -110,7 +106,6 @@ if __name__ == '__main__':
 
 	#--- Initialize point positions. Change if changes are made to position distribution ---#
 	point_position_all = [[-300, 300, 120],[300, 300, 120], [-300, -300, 120], [300, -300, 120]] 
-	#point_position_all = [[-0.30, 0.30, 0.12],[0.30, 0.30, 0.12], [-0.30, -0.30, 0.12], [0.30, -0.30, 0.12]] 
 
 	#--- Create 3d_triangulator_node object --#
 	triangulator = TriangulatorNode3D(point_position_all)
