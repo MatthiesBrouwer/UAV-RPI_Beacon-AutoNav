@@ -7,14 +7,12 @@ from ctypes import c_ubyte as U8, c_short as U16, c_ulonglong as U64
 from dw1000_regs import Reg, DW1000, msdelay
 from dw1000_spi import Spi
 
-import enum
 
 VERSION = "0.16"
 
 # Specify SPI interfaces:
 #   "UDP", "<IP_ADDR>", <PORT_NUM>
-SPIF1       = "UDP", "192.168.2.9", 1401
-SPIF2       = "UDP", "192.168.2.18", 1401
+SPIF	    = "UDP", "127.0.0.1", 1401
 
 # Blink frame with IEEE EUI-64 tag ID
 BLINK_FRAME_CTRL = 0xc5
@@ -22,22 +20,29 @@ BLINK_MSG=(('framectrl',   U8),
            ('seqnum',      U8),
            ('tagid',       U64))
 
+# A message  frame to tranceive between modules
 MSG_FRAME_CTRL = 0xCC41
 MSG_HDR = (('framectrl',   U16),
            ('seqnum',      U8),
-           ('panid',       U16),
-           ('destaddr',    U64),
-           ('srceaddr',    U64))
+           ('destaddr',    U8),
+           ('srceaddr',    U8),
+	   ('msgflag',	   U8),
+	   ('msgdata',     U64))
+
+# Flags for ranging messages
+POLL_FLAG 	= 1
+REPLY_FLAG	= 2
+FINAL_FLAG	= 3
+REPORT_FLAG	= 4
+FINISHED_FLAG	= 5
+RESET_FLAG	= 6
 
 LIGHT_SPEED = 299702547.0
 TSTAMP_SEC  = 1.0 / (128 * 499.2e6)
-#TSTAMP_SEC  = 1.0 / (150 * 499.2e6)
 TSTAMP_DIST = LIGHT_SPEED * TSTAMP_SEC
 
-#DISTANCE_ERROR_MARGE = 0.016
 DISTANCE_ERROR_SUBSTRACTOR = 32500
 DISTANCE_ERROR_MULTIPLIER =  0.93
-
 
 RESET_PERIOD = 10
 
@@ -69,48 +74,183 @@ class Frame(object):
 
 
 
-
-class flag(enum.Enum):
-	SYN = 1
-	ACK = 2
-	FIN = 3
-
-
 #--- Initialise the UWB anchor state machine ---#
-class TagModule:
+class TagModule(DW1000):
+
+	class Anchor:
+		def __init__(self, module_id):
+			#--- Set the modules ranging variables ---#
+			self.module_id = module_id
+			self.prev_flag = 1
+			self.t_reply = 0
+			self.t_round = 0
+			self.prev_msg = None
+
+		def reset(self):
+			self.prev_flag = 1
+			self.t_reply = 0
+			self.t_round = 0
+
+		def logTime(self, t_reply, t_round):
+			self.t_reply = t_reply
+			self.t_round = t_round
+
+		def setFlag(self, new_flag):
+			self.prev_flag = new_flag
+
+		def getPrevFlag(self):
+			return self.prev_flag
+
+		def getId(self):
+			return self.anchor_id
+
+		def messageReceived(self, new_message):
+			self.prev_message = new_message
+			self.prev_flag = new_message[6]
+			print("New message:\t{}\nflag:\t{}".format(new_message, new_message[5]))
+
+
+	class inactiveException(Exception):
+		def __init__(self, ranging_part):
+			self.ranging_part = ranging_part
+			self.message = 	"!!!EXCEPTION!!!\n\tInactive for too long during " + ranging_part
+			Exception.__init__(self.message)
+
 	def __init__(self):
-		self.spi1 = Spi(SPIF1, '1')
-		self.uwb_module = DW1000(spi1)
-		self.uwb_module.reset()
+
+		#--- Initialise the module and the DW1000 ---#
+		self.module_id = 0
+		self.spi = Spi(SPIF, self.module_id)
+		DW1000.__init__(self, self.spi)
+		self.reset()
 
 		if not self.uwb_module.test_irq():
 			print("No interrupt from unit 1")
 		        sys.exit(1)
+		self.initialise()
 
-		self.uwb_module.initialise()
 
-		self.blink_message 		= Frame(BLINK_MSG)
-		self.blink_message.framectrl 	= BLINK_FRAME_CTRL
-		self.blink_message.values.tagid = 0x0101010101010101
+		#--- Initialise the anchor modules ---#
+		self.anchor_modules = []
+		self.anchor_modules.append(	self.AnchorModule(0))
+		self.anchor_modules.append(	self.AnchorModule(1))
+		self.anchor_modules.append(	self.AnchorModule(2))
+		self.anchor_modules.append(	self.AnchorModule(3))
 
-		#--- Initialise time values for error maintinance ---#
-		self.t_reply_start_1 	= 0
-		self.t_reply_end_1 	= 0
-		self.t_round_start_1 	= 0
-		self.t_round_end_1	= 0
-		
-		self.t_last_receive 	= 0
+
+		#--- Declare ranging values ---#
+		self.t_last_transaction = 0
+		self.t_ranging_start	= 0
+		self.t_ranging_end	= 0
 
 		self.state = "IDLE"
 
-	def reply(self):
-		txdata = self.blink_message.data()
-		self.uwb_module.set_txdata(txdata)
-		self.uwb_module.start_tx()
+	def printDataMessage(self, data):
+		print("\n\n--RECEIVED--")
+		print("FROM:\t{}".format(data[4]))
+		print("TO:\t{}".format(data[3]))
+		print("FLAG:\t{}".format(data[5]))
+		print("RXDATA:\t{}"format(data))
+		print("------------\n\n")
+
 
 	def loop(self):
 		self.uwb_module.start_rx()
+
+		poll_message = Frame(MSG_HDR)
+		poll_message.values.framectrl = MSG_FRAME_CTRl
+		poll_message.values.srcaddr = self.module_id
+		poll_message.values.msgflag = POLL_FLAG
+
+		final_message = Frame(MSG_HDR)
+		final_message.values.framectrl = MSG_FRAME_CTRL
+		final_message.values.arcaddr = self.module_id
+		final_message.values.msgflag = self.FINAL_FLAG
+
 		while(true):
+
+			time.sleep(3)
+
+			try:
+				self.t_ranging_start	= 0
+				self.t_ranging_end	= 0
+				######################### POLLING ########################
+				#--- Send the initial poll message to all anchors ---#
+				for anchor in self.anchor_modules:
+					anchor.reset()
+					poll_message.values.seqnum = 1
+					poll_message.values.destaddr = anchor.getId()
+					self.set_rxdata(poll_message)
+					self.start_tx(rx = True)
+				self.t_last_transaction	= time.time()
+
+
+				#--- Wait for all replies before progressing ---#
+				poll_replies_received = 0
+				while True:
+					#--- Restart if no replies are obtained within the reset period ---#
+					if time.time() - self.t_last_transaction < RESET_PERIOD:
+						raise inactiveException("poll")
+
+					rxdata = self.get_rxdata()
+					if rxdata:
+						self.printDataMessage(rxdata)
+
+						#--- If the message is meant for this module and dataflag is a reply flag, ---#
+						#--- log the message ---#n raise exception
+						if rxdata[3] == self.module_id and rxdata[5] == REPLY_FLAG :
+							self.t_last_transaction = time.time()
+							self.anchor_modules[rxdata[4].setFlag(FINAL_FLAG)
+							poll_replies_received++
+
+					if poll_replies_received >= 4:
+						print("ALL REPLIES RECEIVED")
+						break
+
+				##########################################################
+
+				######################### RANGING ########################
+				#--- Send the final ranging message to all anchors ---#
+				for anchor in self.anchor_modules:
+					final_message.values.seqnum = 1
+					final_message.values.destaddr = anchor.getId()
+					self.set_rxdata(final_message)
+					self.start_tx(rx = True)
+				self.t_last_transaction = time.time()
+
+				#--- Wait for all replies before progressing ---#
+				final_replies_received = 0
+				while True:
+					#--- Restart if no replies are obtained within the reset period ---#
+					if time.time() - self.t_last_transaction < RESET_PERIOD:
+						raise inactiveException("final")
+
+					rxdata = self.get_rxdata()
+					if rxdata:
+						self.printDataMessage(rxdata)
+
+						#--- If the message is meant for this module and dataflag is a report flag, ---#
+						#--- log the message as report and save the data ---#
+						if rxdata[3] == self.module_id and rxdata[5] == REPORT_FLAG :
+							self.prev_interaction = time.time()
+							self.anchor_modules[rxdata[4].setFlag(FINISHED_FLAG)
+							final_replies_received++
+
+					if final_replies_received >= 4:
+						print("ALL REPLIES RECEIVED")
+						break
+				##########################################################
+
+
+				print("!!!!!!!!!!!!RANGING FINISHED!!!!!!!!!!!!!!!!")
+
+			except(inactiveException):
+				print(inactiveException.message)
+				time.sleep(2)
+				continue
+
+
+			"""
 			rxdata = self.uwb_module.get_rxdata()
 			if not rxdata and (time.time() - self.t_last_receive) > RESET_PERIOD:
 				print("RESET PERIOD CROSSED")
@@ -140,10 +280,10 @@ class TagModule:
 
 					print("TIMES:\n\treply:\t{}\n\tround:\t{}\n\n".format(self.t_reply_end - self.t_reply_start, self.t_round_end - self.t_round_start))
 
-
+				"""
 if __name__ == "__main__":
-	anchor_module = AnchorModule()
-	anchor_module.loop()
+	tag_module = TagModule()
+	tag_module.loop()
 
 	"""
 	class State:
