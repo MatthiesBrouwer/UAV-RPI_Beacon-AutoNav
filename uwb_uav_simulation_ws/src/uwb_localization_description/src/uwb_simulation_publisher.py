@@ -87,8 +87,10 @@ def calculate_distance(uwb_pose):
 	#--- Calculate distance between the two points ---#
 	total_distance = np.sum((point_1 - point_2)**2, axis = 0)
 
+
 	#--- Add UWB noise ---#
-	total_distance = total_distance + np.random.normal(0, total_distance * 0.015, 1)
+	total_distance = total_distance + (np.random.normal(0, 0.1, 1) * total_distance  * 0.015)  # total_distance * 0.0015, 1) #0.015, 1)
+
 	return np.sqrt(total_distance) 
 
 
@@ -109,7 +111,7 @@ if __name__ == '__main__':
 	sensor_pos = get_anchors_pos()
 
 	#--- Modelstate of robot is in case index 2 ---#
-	MODELSTATE_INDEX = rospy.get_param('/uav_simulation_description/modelstate_index', 1)
+	MODELSTATE_INDEX = rospy.get_param('/uav_simulation_description/modelstate_index', 2)
 	rospy.loginfo("{} is {}".format(rospy.resolve_name('uav_simulation_description/modelstate_index'), MODELSTATE_INDEX))
 	r = rospy.Rate(10)
 	time.sleep(0.5)
